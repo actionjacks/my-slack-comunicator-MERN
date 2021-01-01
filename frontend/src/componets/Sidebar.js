@@ -15,18 +15,29 @@ import CreateIcon from "@material-ui/icons/Create";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddIcon from "@material-ui/icons/Add";
 //database
-import db from "../firebase";
+import axios from "../axios";
 import { useStateValue } from "./../StateProvider";
+import Pusher from "pusher-js";
+const pusher = new Pusher("fa30cbf3764319fd01dd", {
+  cluster: "eu",
+});
 
 const Sidebar = () => {
   const [channels, setChannels] = useState([]);
   const [{ user }] = useStateValue();
 
+  const getChannelList = () => {
+    axios.get("/get/channelList").then((res) => {
+      setChannels(res.data);
+    });
+  };
+
   useEffect(() => {
-    db.collection("rooms").onSnapshot((snapshot) => {
-      setChannels(
-        snapshot.docs.map((doc) => ({ id: doc.id, name: doc.data().name }))
-      );
+    getChannelList();
+
+    const channel = pusher.subscribe("channels");
+    channel.bind("newChannel", function (data) {
+      getChannelList();
     });
   }, []);
 

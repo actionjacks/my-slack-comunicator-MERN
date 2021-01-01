@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import db from "../firebase";
+import axios from "../axios";
 import "../styles/SidebarOption.css";
 
 const SidebarOption = ({ Icon, title, id, addChannelOption }) => {
@@ -18,11 +18,10 @@ const SidebarOption = ({ Icon, title, id, addChannelOption }) => {
     const channelName = prompt("please enter the channel name");
 
     if (channelName) {
-      db.collection("rooms").add({
-        name: channelName,
+      axios.post("new/channel", {
+        channelName,
       });
     }
- 
   };
 
   return (

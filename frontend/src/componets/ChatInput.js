@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/ChatInput.css";
 import { useStateValue } from "../StateProvider";
-import db from "../firebase";
+import axios from "../axios";
 import firebase from "firebase";
 
 const ChatInput = ({ channelName, channelId }) => {
@@ -12,9 +12,9 @@ const ChatInput = ({ channelName, channelId }) => {
     e.preventDefault();
     //send message to db
     if (channelId) {
-      db.collection("rooms").doc(channelId).collection("messages").add({
+      axios.post(`/new/message?id=${channelId}`, {
         message: input,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        timestamp: Date.now(),
         user: user.displayName,
         userImage: user.photoURL,
       });
